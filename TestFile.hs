@@ -134,22 +134,55 @@ todosdistintos (x:xs) = not (pertenece x xs) && todosdistintos xs
 hayrepetidos :: Eq t => [t] -> Bool
 hayrepetidos [] = False
 hayrepetidos [a] = False
+hayrepetidos (x:xs) = pertenece x xs || hayrepetidos xs
+
+division :: Int -> Int -> Float
+division a b = (fromIntegral a) / (fromIntegral b)
+
+sumarinternos :: [Int] -> Int
+sumarinternos [] = 0
+sumarinternos [a] = a
+sumarinternos (x:xs) = x + (sumarinternos xs)
+
+igualcandidatos :: (String, String) -> Bool
+igualcandidatos a = (fst a) == (snd a)
+
+estaotralista :: String -> [(String, String)] -> Bool
+estaotralista a [] = False
+estaotralista a [b] = a == (fst b) || a == (snd b)
+estaotralista a (x:xs) = a == (fst x) || a == (snd x) || estaotralista a xs
+
+cantidadvotos :: String -> [(String, String)] -> [Int] -> Int
+cantidadvotos s (x1:xs1) (x2:xs2)   | s == (snd x1) = x2
+                                    | otherwise = cantidadvotos s xs1 xs2 
+
+esMenor :: Int -> [Int] -> Bool
+esMenor a [b] = a<=b
+esMenor a (x:xs) = a<=b || esMenor a xs
 
 -- Ejercicio 1
 porcentajeDeVotosAfirmativos :: [(String, String)] -> [Int] -> Int  -> Float
-porcentajeDeVotosAfirmativos _ _ _ = 0
+porcentajeDeVotosAfirmativos [] [] a = 0.0
+porcentajeDeVotosAfirmativos s n a = (division (sumarinternos n) a)*100
+
 
 
 -- Ejercicio 2
 formulasInvalidas :: [(String, String)] -> Bool
-formulasInvalidas _ = True
+formulasInvalidas [] = False
+formulasInvalidas [a] = igualcandidatos a
+formulasInvalidas (x:xs) = igualcandidatos x || estaotralista (fst x) xs || estaotralista (snd x) xs
 
 
 -- Ejercicio 3
 porcentajeDeVotos :: String -> [(String, String)] -> [Int] -> Float
-porcentajeDeVotos _ _ _ = 0.0
+porcentajeDeVotos s c b = division (cantidadvotos s c b) (sumarinternos b)
 
 
--- Ejercicio 4
+
+-- Ejercicio 4 ESTOY EDITANDO MUAJAJAJAJ
 menosVotado :: [(String, String)] -> [Int] -> String
-menosVotado _ _ = ""
+menosVotado [a] [b] = fst a
+menosVotado (x:xs) (y:ys)   | esMenor y ys = fst x
+                            | otherwise = menosVotado xs ys
+
